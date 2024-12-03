@@ -3,18 +3,13 @@
 pragma solidity 0.8.26;
 
 contract Common {
-  /**
-   * @dev Returns correct length for an array to be created.
-   * @param arrayLength Length of array.
-   * @param maxLength Maximum length to be used.
-   * @param fromIdx Start index.
-   * @return Correct length.
-   */
+
+  address[] private addresses;
   function _correctLength(  // @audit - проверить через tla+
     uint256 arrayLength,
     uint256 maxLength,
     uint256 fromIdx
-  ) internal pure returns (uint256) {
+  ) public pure returns (uint256) {
     if (arrayLength == 0 || maxLength == 0 || fromIdx >= arrayLength) {
       return 0;
     }
@@ -38,5 +33,19 @@ contract Common {
       array[index] = array[array.length - 1];
     }
     array.pop();
+  }
+
+  // Add state variable
+  
+
+  function callRemoveFromArray(uint256 index) public {
+    // Reset array to new length
+    while(addresses.length > 0) {
+      addresses.pop();
+    }
+    for (uint256 i = 0; i < index; i++) {
+      addresses.push(address(uint160(uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, i))))));
+    }
+    _removeFromArray(index - 1, addresses);
   }
 }
